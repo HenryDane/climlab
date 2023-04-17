@@ -221,10 +221,10 @@ class RRTMG_SW(_Radiation_SW):
                 tauaer, ssaaer, asmaer, ecaer,
                 bndsolvar, indsolvar, solcycfrac)
         #  Output is all (ncol,nlay+1) or (ncol,nlay)
-        self.SW_flux_up = _rrtm_to_climlab(swuflx) + 0.*self.SW_flux_up
-        self.SW_flux_down = _rrtm_to_climlab(swdflx) + 0.*self.SW_flux_down
-        self.SW_flux_up_clr = _rrtm_to_climlab(swuflxc) + 0.*self.SW_flux_up_clr
-        self.SW_flux_down_clr = _rrtm_to_climlab(swdflxc) + 0.*self.SW_flux_down_clr
+        self.SW_flux_up = _rrtm_to_climlab(swuflx, self.SW_flux_up.shape[:2]) + 0.*self.SW_flux_up
+        self.SW_flux_down = _rrtm_to_climlab(swdflx, self.SW_flux_down.shape[:2]) + 0.*self.SW_flux_down
+        self.SW_flux_up_clr = _rrtm_to_climlab(swuflxc, self.SW_flux_up_clr.shape[:2]) + 0.*self.SW_flux_up_clr
+        self.SW_flux_down_clr = _rrtm_to_climlab(swdflxc, self.SW_flux_down_clr.shape[:2]) + 0.*self.SW_flux_down_clr
         #  Compute quantities derived from fluxes, including ASR
         self._compute_SW_flux_diagnostics()
         #  calculate heating rates from flux divergence

@@ -140,10 +140,10 @@ class RRTMG_LW(_Radiation_LW):
                  taucmcl, ciwpmcl, clwpmcl, reicmcl, relqmcl,
                  tauaer)
         #  Output is all (ncol,nlay+1) or (ncol,nlay)
-        self.LW_flux_up = _rrtm_to_climlab(uflx) + 0.*self.LW_flux_up
-        self.LW_flux_down = _rrtm_to_climlab(dflx) + 0.*self.LW_flux_down
-        self.LW_flux_up_clr = _rrtm_to_climlab(uflxc) + 0.*self.LW_flux_up_clr
-        self.LW_flux_down_clr = _rrtm_to_climlab(dflxc) + 0.*self.LW_flux_down_clr
+        self.LW_flux_up = _rrtm_to_climlab(uflx, self.LW_flux_up.shape[:2]) + 0.*self.LW_flux_up
+        self.LW_flux_down = _rrtm_to_climlab(dflx, self.LW_flux_up.shape[:2]) + 0.*self.LW_flux_down
+        self.LW_flux_up_clr = _rrtm_to_climlab(uflxc, self.LW_flux_up.shape[:2]) + 0.*self.LW_flux_up_clr
+        self.LW_flux_down_clr = _rrtm_to_climlab(dflxc, self.LW_flux_up.shape[:2]) + 0.*self.LW_flux_down_clr
         #  Compute quantities derived from fluxes, including OLR
         self._compute_LW_flux_diagnostics()
         # Except for spectrally-decomposed TOA flux, olr_sr (ncol, nbndlw)

@@ -57,7 +57,6 @@ def interface_temperature(Ts, Tatm, **kwargs):
     ndomain = type(Tatm.domain)(axes=Tatm.domain.axes.copy())
     ndomain.shape = Tinterp.shape # awful hack which might break things later on
     
-    print('tinterp_shape=', Tinterp.shape, 'domain_shape=', ndomain.shape)
     return Field(Tinterp, domain=ndomain) 
 
 def _climlab_to_rrtm(field):
@@ -97,7 +96,7 @@ def _climlab_to_rrtm(field):
     elif len(shape)>3:  # (num_lat, num_lon, num_lev, ...?)
         raise ValueError('Grids must have at most three dimensions ({:d} found instead).'.format(len(shape)))
 
-def _rrtm_to_climlab(field):
+def _rrtm_to_climlab(field, xydim=None):
     try:
         #  Flip along the last axis to reverse the pressure order
         field = field[..., ::-1]
@@ -106,7 +105,11 @@ def _rrtm_to_climlab(field):
             return field
         else:
             raise ValueError('field must be array_like or scalar.')
-    return np.squeeze(field)
+    if xydim is None:
+        return np.squeeze(field)
+    else:
+        # NOTE: THIS ASSUMES DIMENSION IS LAT, LON, LEV ALWAYS
+        return np.reshape(field, newshape=(xydim[0], xydim[1], -1))
 
 def _climlab_to_rrtm_sfc(field, Ts):
     '''Return an array of size np.squeeze(Ts) to remove the singleton depth dimension'''
