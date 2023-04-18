@@ -6,6 +6,10 @@ from climlab.domain.field import Field
 from climlab.domain.axis import Axis
 
 def _safe_avmr_mult(a, b):
+    if np.isscalar(a) or np.isscalar(b):
+        return a * b
+    if len(a.shape) == len(b.shape):
+        return a * b
     '''Multiplies lat,lev by lat,lon,lev'''
     return np.repeat((a * np.ones_like(b[:,0,:]))[:,np.newaxis,:], b.shape[1], axis=1)
 
@@ -97,6 +101,7 @@ def _climlab_to_rrtm(field):
         raise ValueError('Grids must have at most three dimensions ({:d} found instead).'.format(len(shape)))
 
 def _rrtm_to_climlab(field, xydim=None):
+    print(xydim)
     try:
         #  Flip along the last axis to reverse the pressure order
         field = field[..., ::-1]
@@ -105,11 +110,11 @@ def _rrtm_to_climlab(field, xydim=None):
             return field
         else:
             raise ValueError('field must be array_like or scalar.')
-    if xydim is None:
+    if xydim is None or len(xydim) < 2:
         return np.squeeze(field)
     else:
         # NOTE: THIS ASSUMES DIMENSION IS LAT, LON, LEV ALWAYS
-        return np.reshape(field, newshape=(xydim[0], xydim[1], -1))
+        return np.squeeze(np.reshape(field, newshape=(xydim[0], xydim[1], -1)))
 
 def _climlab_to_rrtm_sfc(field, Ts):
     '''Return an array of size np.squeeze(Ts) to remove the singleton depth dimension'''
