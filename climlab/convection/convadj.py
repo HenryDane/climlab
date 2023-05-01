@@ -71,7 +71,7 @@ class ConvectiveAdjustment(TimeDependentProcess):
         Tatm = self.Tatm
         if 'Ts' in self.state:
             Ts = np.atleast_1d(self.Ts)
-            return np.concatenate((Tatm, Ts),axis=-1)
+            return np.concatenate((Tatm, Ts),axis=self.Tatm.domain.axis_index['lev'])
         else:
             return Tatm
     @property

@@ -101,7 +101,6 @@ def _climlab_to_rrtm(field):
         raise ValueError('Grids must have at most three dimensions ({:d} found instead).'.format(len(shape)))
 
 def _rrtm_to_climlab(field, xydim=None):
-    print(xydim)
     try:
         #  Flip along the last axis to reverse the pressure order
         field = field[..., ::-1]
