@@ -1,0 +1,19 @@
+MeridionalHeatDiffusion does not work with lon
+
+AplusBT does not like this setup:
+    state = climlab.column_state(num_lev=10)
+    model = climlab.TimeDependentProcess(state=state)
+    model.add_subprocess(climlab.radiation.aplusbt.AplusBT())
+
+RRTMG suspect is 
+    application of insolation (check DailyInsolation, etc)
+    ConvectiveAdjustment?
+        #  For now, let's assume that the vertical axis is the last axis
+        
+DailyInsolation says (L556)
+    if 'lon' in dom.axes:
+        # insolation is latitude-only, need to broadcast across longitude
+        #  assumption is axes are ordered (lat, lon, depth)
+        #  NOTE this is a clunky hack and all this will go away
+        #  when we use xarray structures for these internals
+        insolation = np.tile(insolation[...,np.newaxis], dom.axes['lon'].num_points)        
