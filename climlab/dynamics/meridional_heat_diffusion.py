@@ -84,8 +84,13 @@ class MeridionalHeatDiffusion(MeridionalDiffusion):
         self._update_diffusivity()
 
     def _update_diffusivity(self):
-        for varname, value in self.state.items():
-            heat_capacity = value.domain.heat_capacity
+        if 'Tatm' in self.state:
+            domain = self.state['Tatm'].domain
+        else:
+            domain = self.state['default'].domain # im not sure about this tbh
+        heat_capacity = domain.heat_capacity
+        if self.diffusion_axis != 'lev':
+            heat_capacity = np.broadcast_to(heat_capacity, domain.shape)
         # diffusivity in units of m**2/s
         self.K = self.D / heat_capacity * const.a**2
 

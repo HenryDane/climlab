@@ -17,3 +17,10 @@ DailyInsolation says (L556)
         #  NOTE this is a clunky hack and all this will go away
         #  when we use xarray structures for these internals
         insolation = np.tile(insolation[...,np.newaxis], dom.axes['lon'].num_points)        
+        
+why does meridional_heat_diffusion.py:L87 look like this:
+    for varname, value in self.state.items():
+        heat_capacity = value.domain.heat_capacity
+    # diffusivity in units of m**2/s
+    self.K = self.D / heat_capacity * const.a**2        
+        
