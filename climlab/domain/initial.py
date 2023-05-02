@@ -161,3 +161,28 @@ def surface_state(num_lat=90,
     state = AttrDict()
     state['Ts'] = Ts
     return state
+    
+def volume_state(num_lev=30, num_lat=30, num_lon=30, water_depth=1.0):
+    '''
+    Create a 3D climlab state
+    '''
+    
+    # make domains
+    sfc, atm = domain.make_volume_domains(num_lev=num_lev, num_lat=num_lat, num_lon=num_lon, water_depth=water_depth)
+    
+    # update elevation value
+    num_lev = atm.lev.num_points
+    
+    # make fields
+    Ts = Field(288.*np.ones(sfc.shape), domain=sfc)
+    Tinitial = np.tile(np.linspace(200., 288.-10., num_lev), sfc.shape)
+    Tatm = Field(Tinitial, domain=atm)
+    
+    # create state with some basic variables
+    state = AttrDict()
+    state['Ts'] = Ts
+    state['Tatm'] = Tatm
+    
+    # return the state
+    return state
+        

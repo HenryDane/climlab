@@ -641,3 +641,24 @@ def box_model_domain(num_points=2, **kwargs):
     boxes = _Domain(axes=ax, **kwargs)
     boxes.domain_type = 'box'
     return boxes
+    
+def make_volume_domains(num_lev=30, num_lat=30, num_lon=30, water_depth=1.0, **kwargs):
+    '''
+    Create 3D volumes
+    '''
+    
+    # make axes
+    latax = Axis(axis_type='lat', num_points=num_lat)
+    lonax = Axis(axis_type='lon', num_points=num_lon)
+    levax = Axis(axis_type='lev', num_points=num_lev)
+    depax = Axis(axis_type='depth', bounds=[water_depth, 0.0])
+    
+    # make ocean
+    slab = SlabOcean(axes={'lat':latax, 'lon':lonax, 'depth':depax}, **kwargs)
+    
+    # make atmosphere
+    atm = Atmosphere(axes={'lat':latax, 'lon':lonax, 'lev':levax}, **kwargs)
+    
+    # return the domains
+    return slab, atm  
+      

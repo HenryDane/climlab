@@ -21,7 +21,7 @@ from .model.column import GreyRadiationModel, RadiativeConvectiveModel, BandRCMo
 from .model.ebm import EBM, EBM_annual, EBM_seasonal
 from .domain.field import Field, global_mean
 from .domain.axis import Axis
-from .domain.initial import column_state, surface_state
+from .domain.initial import column_state, surface_state, volume_state
 from .process import Process, TimeDependentProcess, ImplicitProcess, DiagnosticProcess, EnergyBudget
 from .process import process_like, get_axes, couple
 from .domain.xarray import to_xarray
