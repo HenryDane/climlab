@@ -208,6 +208,20 @@ class RRTMG_SW(_Radiation_SW):
             ssacmcl, asmcmcl, fsfcmcl) = _rrtmg_sw.climlab_mcica_subcol_sw(
                             ncol, nlay, icld, permuteseed, irng, play,
                             cldfrac, ciwp, clwp, reic, relq, tauc, ssac, asmc, fsfc)
+        # make sure nothing is going to crash
+        for i, thing in enumerate([ncol, nlay, icld, iaer,
+            play, plev, tlay, tlev, tsfc,
+            h2ovmr, o3vmr, co2vmr, ch4vmr, n2ovmr, o2vmr,
+            asdir, asdif, aldir, aldif,
+            coszen, adjes, dyofyr, scon, isolvar,
+            inflgsw, iceflgsw, liqflgsw, cldfmcl,
+            taucmcl, ssacmcl, asmcmcl, fsfcmcl,
+            ciwpmcl, clwpmcl, reicmcl, relqmcl,
+            tauaer, ssaaer, asmaer, ecaer,
+            bndsolvar, indsolvar, solcycfrac]):
+            if not np.isfinite(thing).all():
+                print('NON FINITE VALUE ENCOUNTERED IN RRTMG_SW: ', i, '\n', thing)
+                #return
         #  Call the RRTMG_SW driver to compute radiative fluxes
         (swuflx, swdflx, swhr, swuflxc, swdflxc, swhrc) = \
             _rrtmg_sw.climlab_rrtmg_sw(ncol, nlay, icld, iaer,

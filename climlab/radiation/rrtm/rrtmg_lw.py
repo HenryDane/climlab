@@ -130,6 +130,16 @@ class RRTMG_LW(_Radiation_LW):
                             ncol, nlay, icld,
                             permuteseed, irng, play,
                             cldfrac, ciwp, clwp, reic, relq, tauc)
+        for i, thing in enumerate([ncol, nlay, icld, ispec, idrv,
+            play, plev, tlay, tlev, tsfc,
+            h2ovmr, o3vmr, co2vmr, ch4vmr, n2ovmr, o2vmr,
+            cfc11vmr, cfc12vmr, cfc22vmr, ccl4vmr, emis,
+            inflglw, iceflglw, liqflglw, cldfmcl,
+            taucmcl, ciwpmcl, clwpmcl, reicmcl, relqmcl,
+            tauaer]):
+            if not np.isfinite(thing).all():
+                print('NON FINITE VALUE ENCOUNTERED IN RRTMG_LW: ', i, '\n', thing)
+                #return
             #  Call the RRTMG_LW driver to compute radiative fluxes
         (olr_sr, uflx, dflx, hr, uflxc, dflxc, hrc, duflx_dt, duflxc_dt) = \
             _rrtmg_lw.climlab_rrtmg_lw(ncol, nlay, icld, ispec, idrv,
