@@ -131,6 +131,13 @@ class RRTMG(_Radiation_SW, _Radiation_LW):
             if item in kwargs:
                 ignored = kwargs.pop(item)
 
+        # replace these with @property versions
+        self._clwp = self.clwp
+        self._cldfrac = self.cldfrac
+        self._ciwp = self.ciwp
+        self._r_liq = self.r_liq
+        self._r_ice = self.r_ice
+
         LW = RRTMG_LW(absorber_vmr = self.absorber_vmr,
                      cldfrac = self.cldfrac,
                      clwp = self.clwp,
@@ -210,3 +217,69 @@ class RRTMG(_Radiation_SW, _Radiation_LW):
         self.add_input('indsolvar', indsolvar)
         self.add_input('bndsolvar', bndsolvar)
         self.add_input('solcycfrac', solcycfrac)
+        
+    @property
+    def clwp(self):
+        return self._clwp
+    
+    @clwp.setter
+    def clwp(self, x):
+        self._clwp = x
+        # propagate to subprocesses
+        if 'SW' in self.subprocess:
+            self.subprocess['SW'].clwp = x
+        if 'LW' in self.subprocess:
+            self.subprocess['LW'].clwp = x
+            
+    @property
+    def cldfrac(self):
+        return self._cldfrac
+    
+    @cldfrac.setter
+    def cldfrac(self, x):
+        self._cldfrac = x
+        # propagate to subprocesses
+        if 'SW' in self.subprocess:
+            self.subprocess['SW'].cldfrac = x
+        if 'LW' in self.subprocess:
+            self.subprocess['LW'].cldfrac = x
+            
+    @property
+    def ciwp(self):
+        return self._ciwp
+    
+    @ciwp.setter
+    def ciwp(self, x):
+        self._ciwp = x
+        # propagate to subprocesses
+        if 'SW' in self.subprocess:
+            self.subprocess['SW'].ciwp = x
+        if 'LW' in self.subprocess:
+            self.subprocess['LW'].ciwp = x        
+            
+    @property
+    def r_liq(self):
+        return self._r_liq
+    
+    @r_liq.setter
+    def r_liq(self, x):
+        self._r_liq = x
+        # propagate to subprocesses
+        if 'SW' in self.subprocess:
+            self.subprocess['SW'].r_liq = x 
+        if 'LW' in self.subprocess:
+            self.subprocess['LW'].r_liq = x     
+            
+    @property
+    def r_ice(self):
+        return self._r_ice
+    
+    @r_ice.setter
+    def r_ice(self, x):
+        self._r_ice = x
+        # propagate to subprocesses
+        if 'SW' in self.subprocess:
+            self.subprocess['SW'].r_ice = x
+        if 'LW' in self.subprocess:
+            self.subprocess['LW'].r_ice = x
+            
