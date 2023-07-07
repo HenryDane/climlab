@@ -8,3 +8,4 @@ For a full convection scheme including interactive water vapor, use :class:`~cli
 from __future__ import absolute_import
 from .convadj import ConvectiveAdjustment
 from .emanuel_convection import EmanuelConvection
+from .largescalecloud import LargeScaleCloud
