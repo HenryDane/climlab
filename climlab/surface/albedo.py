@@ -359,7 +359,7 @@ class StepFunctionAlbedo(DiagnosticProcess):
         self.param['a2'] = a2
         self.param['ai'] = ai
         sfc = self.domains['Ts']
-        self.add_subprocess('iceline', Iceline(Tf=Tf, state=self.state, timestep=self.timestep))
+        #self.add_subprocess('iceline', Iceline(Tf=Tf, state=self.state, timestep=self.timestep))
         warm = P2Albedo(a0=a0, a2=a2, domains=sfc, timestep=self.timestep)
         cold = ConstantAlbedo(albedo=ai, domains=sfc, timestep=self.timestep)
         # remove `albedo` from the diagnostics list for the two subprocesses
@@ -373,11 +373,11 @@ class StepFunctionAlbedo(DiagnosticProcess):
 
     def _get_current_albedo(self):
         '''Simple step-function albedo based on ice line at temperature Tf.'''
-        ice = self.subprocess['iceline'].ice
+        #ice = self.subprocess['iceline'].ice
         # noice = self.subprocess['iceline'].diagnostics['noice']
         cold_albedo = self.subprocess['cold_albedo'].albedo
         warm_albedo = self.subprocess['warm_albedo'].albedo
-        albedo = Field(np.where(ice, cold_albedo, warm_albedo), domain=self.domains['Ts'])
+        albedo = Field(np.where(self.Ts < self.param['Tf'], cold_albedo, warm_albedo), domain=self.domains['Ts'])
         return albedo
 
     def _compute(self):
