@@ -122,6 +122,13 @@ class RRTMG(_Radiation_SW, _Radiation_LW):
             **kwargs):
         super(RRTMG, self).__init__(**kwargs)
 
+        self.add_input('cldfrac', self.cldfrac)
+        self.add_input('clwp', self.clwp)
+        self.add_input('ciwp', self.ciwp)
+        self.add_input('r_ice', self.r_ice)
+        self.add_input('r_liq', self.r_liq)
+        self.add_input('r_eff', self.r_liq)
+
         # Remove specific inputs from kwargs dictionary.
         #  We want any changes implemented in the parent __init__ method to be preserved here
         remove_list = ['absorber_vmr','cldfrac','clwp','ciwp','r_liq','r_ice',
@@ -130,13 +137,6 @@ class RRTMG(_Radiation_SW, _Radiation_LW):
         for item in remove_list:
             if item in kwargs:
                 ignored = kwargs.pop(item)
-
-        # replace these with @property versions
-        self._clwp = self.clwp
-        self._cldfrac = self.cldfrac
-        self._ciwp = self.ciwp
-        self._r_liq = self.r_liq
-        self._r_ice = self.r_ice
 
         LW = RRTMG_LW(absorber_vmr = self.absorber_vmr,
                      cldfrac = self.cldfrac,
@@ -218,68 +218,4 @@ class RRTMG(_Radiation_SW, _Radiation_LW):
         self.add_input('bndsolvar', bndsolvar)
         self.add_input('solcycfrac', solcycfrac)
         
-    @property
-    def clwp(self):
-        return self._clwp
-    
-    @clwp.setter
-    def clwp(self, x):
-        self._clwp = x
-        # propagate to subprocesses
-        if 'SW' in self.subprocess:
-            self.subprocess['SW'].clwp = x
-        if 'LW' in self.subprocess:
-            self.subprocess['LW'].clwp = x
-            
-    @property
-    def cldfrac(self):
-        return self._cldfrac
-    
-    @cldfrac.setter
-    def cldfrac(self, x):
-        self._cldfrac = x
-        # propagate to subprocesses
-        if 'SW' in self.subprocess:
-            self.subprocess['SW'].cldfrac = x
-        if 'LW' in self.subprocess:
-            self.subprocess['LW'].cldfrac = x
-            
-    @property
-    def ciwp(self):
-        return self._ciwp
-    
-    @ciwp.setter
-    def ciwp(self, x):
-        self._ciwp = x
-        # propagate to subprocesses
-        if 'SW' in self.subprocess:
-            self.subprocess['SW'].ciwp = x
-        if 'LW' in self.subprocess:
-            self.subprocess['LW'].ciwp = x        
-            
-    @property
-    def r_liq(self):
-        return self._r_liq
-    
-    @r_liq.setter
-    def r_liq(self, x):
-        self._r_liq = x
-        # propagate to subprocesses
-        if 'SW' in self.subprocess:
-            self.subprocess['SW'].r_liq = x 
-        if 'LW' in self.subprocess:
-            self.subprocess['LW'].r_liq = x     
-            
-    @property
-    def r_ice(self):
-        return self._r_ice
-    
-    @r_ice.setter
-    def r_ice(self, x):
-        self._r_ice = x
-        # propagate to subprocesses
-        if 'SW' in self.subprocess:
-            self.subprocess['SW'].r_ice = x
-        if 'LW' in self.subprocess:
-            self.subprocess['LW'].r_ice = x
             

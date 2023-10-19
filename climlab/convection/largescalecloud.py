@@ -6,13 +6,16 @@ from __future__ import absolute_import
 
 import numpy as np
 import warnings
-from climlab.process import TimeDependentProcess
+from climlab.process import DiagnosticProcess
 from climlab.utils.thermo import qsat, lifting_condensation_level
 from climlab import constants as const
 
-class LargeScaleCloud(TimeDependentProcess):
+class LargeScaleCloud(DiagnosticProcess):
     def __init__(self, **kwargs):
         super(LargeScaleCloud, self).__init__(**kwargs)
+        
+        # add relative_humidity as input
+        self.add_input('relative_humidity', self.Tatm * 0)
         
         # add diagnostics
         self.add_diagnostic('cldfrac', self.Tatm * 0)
@@ -28,22 +31,20 @@ class LargeScaleCloud(TimeDependentProcess):
         self.RH_crit = np.interp(self.lev, [200, 700, 1000], [0.99, 0.85, 0.95])
         
         # calculate altitude table
-        Mair = 28.97; g=9.81; R=8.314; H = (R*250) / (Mair * g); LR = 9.81
+        Mair = 28.97; g=9.81; R=8.314; H = (R*250) / (Mair * g)
         self.alt = np.log(self.lev / self.lev.max()) * H * -1
         
     def _compute(self):
-        # NOTE: RH is computed as 0-100 by EC but 0-1 by other stuff
-        if 'relative_humidity' in self.diagnostics:
-            RH = np.minimum(1, np.maximum(0, self.diagnostics['relative_humidity'] / 100))
-        else:
-            RH = self.Tatm * 0
+        # scale RH to [0,1] from [0,100]
+        print(self.relative_humidity)
+        RH = np.minimum(1, np.maximum(0, self.relative_humidity / 100))
         
         # figure out inversion level altitude
-        theta = self.Tatm * (self.lev / self.lev.max()) ** (287.052874 / 1004.0)
+        theta    = self.Tatm * (self.lev / self.lev.max()) ** (287.052874 / 1004.0)
         dthetadP = np.gradient(theta[:,self.lev > 750], self.lev[self.lev > 750], axis=1) # K/hPa
-        mingrad = np.min(dthetadP, axis=1)
-        zinvidx = np.argmin(dthetadP, axis=1)
-        zinv = self.alt[zinvidx.data] * 1e3 # in meters
+        mingrad  = np.min(dthetadP, axis=1)
+        zinvidx  = np.argmin(dthetadP, axis=1)
+        zinv     = self.alt[zinvidx.data] * 1e3 # in meters
         
         # find zlcl
         zlcl = lifting_condensation_level(self.Ts, RH[-1]) # this throws RuntimeWarning (div by 0 in log(RH))
@@ -54,7 +55,6 @@ class LargeScaleCloud(TimeDependentProcess):
         qv  = calc_qv(self.lev)
         fd  = calc_f(self.q, qv)
         elf = calc_elf(fd, zinv, zlcl)
-        #print(fd, zinv, zlcl, elf)
         C   = np.maximum(calc_cs(RH, a) * fd, calc_csc(elf) * (mingrad < -0.08)[:,None])
         
         # calculate cloud properties
@@ -64,16 +64,14 @@ class LargeScaleCloud(TimeDependentProcess):
         cwp = calc_clwp(self.lev, C, wl)
         
         # assign diagnostics
-        #'''
         self.cldfrac = C
         self.f_liq   = fl
-        self.r_eff   = re
+        self.r_eff[:] = re
         self.r_liq   = 14.0 * fl
         self.r_ice   = 25.0 * (1 - fl)
         self.clwp    = cwp * fl
         self.ciwp    = cwp * (1 - fl)
         self.clwmr   = wl
-        #'''
         
         return {}
 

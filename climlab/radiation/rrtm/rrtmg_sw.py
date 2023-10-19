@@ -87,6 +87,14 @@ class RRTMG_SW(_Radiation_SW):
             solcycfrac = 1.,              # Fraction of averaged solar cycle (0-1) at current time (isolvar=1)
             **kwargs):
         super(RRTMG_SW, self).__init__(**kwargs)
+        
+        self.add_input('cldfrac', self.cldfrac)
+        self.add_input('clwp', self.clwp)
+        self.add_input('ciwp', self.ciwp)
+        self.add_input('r_ice', self.r_ice)
+        self.add_input('r_liq', self.r_liq)
+        self.add_input('r_eff', self.Tatm * 0)
+        
         #  define INPUTS
         self.add_input('icld', icld)
         self.add_input('irng', irng)

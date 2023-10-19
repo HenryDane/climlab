@@ -41,6 +41,14 @@ class RRTMG_LW(_Radiation_LW):
             return_spectral_olr = False, # Whether or not to return OLR averaged over each band
             **kwargs):
         super(RRTMG_LW, self).__init__(**kwargs)
+        
+        self.add_input('cldfrac', self.cldfrac)
+        self.add_input('clwp', self.clwp)
+        self.add_input('ciwp', self.ciwp)
+        self.add_input('r_ice', self.r_ice)
+        self.add_input('r_liq', self.r_liq)
+        self.add_input('r_eff', self.Tatm * 0)
+        
         #  define INPUTS
         self.add_input('icld', icld)
         self.add_input('irng', irng)
