@@ -258,6 +258,7 @@ class Iceline(DiagnosticProcess):
         lat_bounds = self.domains['Ts'].axes['lat'].bounds
         self.noice = np.where(Ts >= Tf, True, False)
         self.ice = np.where(Ts < Tf, True, False)
+        return # temporary hack to skip iceline calculation
         #  Ice cover in fractional area
         self.ice_area = global_mean(self.ice * np.ones_like(self.Ts))
         #  Express ice cover in terms of ice edge latitudes
